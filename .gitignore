@@ -1,0 +1,7 @@
+/build/
+/out/
+.vs/
+*.user
+*.hsim
+*.hsim.history/
+imgui.ini
