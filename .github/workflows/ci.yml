@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  windows:
+    name: Windows (${{ matrix.config }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [debug, release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake --preset msvc
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.config }} --parallel
+
+      - name: Test
+        run: ctest --preset ${{ matrix.config }}
+
+      - name: Upload viewer and CLI
+        if: matrix.config == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: humansim-windows
+          path: |
+            build/msvc/app/Release/humansim_viewer.exe
+            build/msvc/cli/Release/humansim.exe
